@@ -66,13 +66,14 @@ const SidebarContent = ({ logoText, routes }) => {
         )
       }
       return (
-        <NavLink to={prop.layout + prop.path} key={prop.name}>
+        <NavLink to={prop.path} key={prop.name}>
           {prop.path === window.location.pathname ? (
             <Button
               boxSize="initial"
               justifyContent="flex-start"
               alignItems="center"
               bg={activeBg}
+              boxShadow='0px 7px 11px rgba(0, 0, 0, 0.04)'
               mb={{
                 xl: "12px",
               }}
@@ -93,7 +94,7 @@ const SidebarContent = ({ logoText, routes }) => {
                 borderColor: "transparent",
               }}
               _focus={{
-                boxShadow: "none",
+                boxShadow: "gba(0, 0, 0, 0.04) 0px 7px 11px",
               }}
             >
               <Flex>

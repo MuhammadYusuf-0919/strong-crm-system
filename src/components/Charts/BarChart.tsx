@@ -3,8 +3,13 @@ import Card from "@/components/Card";
 import Chart from "react-apexcharts";
 import { barChartData, barChartOptions } from "@/variables/charts";
 
-class BarChart extends Component {
-  constructor(props) {
+interface BarChartState {
+  chartData: Array<any>; // Update the type based on your actual data structure
+  chartOptions: any; // Update the type based on your actual options structure
+}
+
+class BarChart extends Component<{}, BarChartState> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       chartData: [],

@@ -1,21 +1,28 @@
 // react import
-import React from "react"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // components import
 // import Loadable from "@/components/loadable"
 // routes import
-import ProtectedRoute from "./ProtectedRoute"
+import ProtectedRoute from './ProtectedRoute';
 // error pages import
-// import Error404 from "@/pages/ErrorPages/Error404"
+import Error404 from '@/pages/NotFound';
 // layout import
-import SignIn from "@/pages/SignIn"
-import Loadable from "@/components/loadable"
-import AuthLayout from "@/layout/authLayout"
-import AppLayout from "@/layout/appLayout"
+import SignIn from '@/pages/SignIn';
+import Loadable from '@/components/loadable';
+import AuthLayout from '@/layout/AuthLayout';
+import AppLayout from '@/layout/AppLayout';
+import SignUp from '@/pages/SignUp';
 // pages with lazy imports
-const DashboardCrm = Loadable(React.lazy(() => import("@/pages/dashboard")))
+const DashboardCrm = Loadable(React.lazy(() => import('@/pages/dashboard')));
+const Employees = Loadable(React.lazy(() => import('@/pages/Employees')));
+const CrudForm = Loadable(React.lazy(() => import('@/modules/CrudForm')));
 
-const protectedRoutes = [{ path: "/", component: DashboardCrm }]
+const protectedRoutes = [
+  { path: '/', component: DashboardCrm },
+  { path: '/employees', component: Employees },
+  { path: '/:id/create', component: CrudForm },
+];
 
 const AppRoutes = () => {
   return (
@@ -29,8 +36,16 @@ const AppRoutes = () => {
             </AuthLayout>
           }
         />
-        {/* Protected Routes */}
+        <Route
+          path="/sign-up"
+          element={
+            <AuthLayout>
+              <SignUp />
+            </AuthLayout>
+          }
+        />
 
+        {/* Protected Routes */}
         {protectedRoutes.map(({ path, component: Component }) => (
           <Route
             key={path}
@@ -44,10 +59,10 @@ const AppRoutes = () => {
         ))}
 
         {/* Error Routes */}
-        {/* <Route path="*" element={<Error404 />} /> */}
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default AppRoutes
+export default AppRoutes;

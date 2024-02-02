@@ -8,12 +8,13 @@ import SignUp from "@/pages/SignUp";
 
 import {
   HomeIcon,
-  StatsIcon,
+  EmployeeIcon,
   CreditIcon,
   PersonIcon,
   DocumentIcon,
   RocketIcon,
 } from "@/components/Icon/svg";
+import Iconify from "@/components/icon";
 
 var dashRoutes = [
   {
@@ -23,9 +24,10 @@ var dashRoutes = [
     component: Dashboard,
   },
   {
-    path: "/tables",
-    name: "Tables",
-    icon: <StatsIcon color="inherit" />,
+    path: "/employees",
+    name: "Xodimlar",
+    // icon: <EmployeeIcon color="inherit" />,
+    icon: <Iconify icon='solar:users-group-rounded-outline' />,
     component: Tables,
   },
   {

@@ -1,19 +1,22 @@
-// import React, { useEffect } from "react";
-// import { Navigate, useNavigate } from "react-router-dom";
-// import useToken from "@/hooks/useToken";
+import React from 'react';
+import useToken from '@/hooks/useToken';
+import { useNavigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   component: React.ComponentType<any>;
   [key: string]: any;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component: Component, ...rest }) => {
-  // const { token } = useToken();
-  // const navigate = useNavigate();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  component: Component,
+  ...rest
+}) => {
+  const { token } = useToken();
+  const navigate = useNavigate();
 
-  // useEffect(() => {
+  // React.useEffect(() => {
   //   if (!token) {
-  //     navigate("/login");
+  //     navigate('/sign-in');
   //   }
   // }, [token, navigate]);
 
