@@ -1,164 +1,80 @@
 // CrudForm.tsx
+import React from 'react';
+import { FormData } from '@/types';
+import { RootState } from '@/redux';
 import Card from '@/components/Card';
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Box, Button, Grid, GridItem, VStack } from '@chakra-ui/react';
-import FormInput from '@/components/FormInput';
-
-interface FormData {
-  name: string;
-  logo: string;
-  email: string;
-  subdomain: string;
-  domain: string;
-  status: string;
-  date: string;
-  description: string;
-}
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addEntity, updateEntity } from '@/redux/crudSlice';
+import { Box, Button, Text, VStack } from '@chakra-ui/react';
+import { useForm, SubmitHandler, FieldValues } from 'react-hook-form';
 
 const CrudForm: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    logo: '',
-    email: '',
-    subdomain: '',
-    domain: '',
-    status: '',
-    date: '',
-    description: '',
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {
+    entity,
+    create,
+    update,
+    editValue,
+    initialState,
+    ADD_NEW_ENTITY,
+    crudForm: FormElements,
+  } = useSelector((state: RootState) => state.config);
+  const [loading, setLoading] = React.useState(false);
+  const {
+    reset,
+    control,
+    handleSubmit,
+    formState: { errors, isDirty },
+  } = useForm<FormData>({
+    mode: 'onBlur',
+    defaultValues: create ? initialState : editValue,
   });
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const onSubmit: SubmitHandler<FieldValues> = async (data: FormData) => {
+    try {
+      setLoading(true); 
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    // Handle form submission (e.g., dispatch an action)
-    console.log('Form submitted with data:', formData);
-    // Reset form after submission if needed
-    setFormData({
-      name: '',
-      logo: '',
-      email: '',
-      subdomain: '',
-      domain: '',
-      status: '',
-      date: '',
-      description: '',
-    });
+      if (update) {
+        await dispatch(updateEntity({ entityName: entity, data }));
+      } else if (create) {
+        await dispatch(addEntity({ entityName: entity, data }));
+      }
+
+      reset(initialState);
+      navigate(`/${entity}`);
+    } catch (error) {
+    } finally {
+      setLoading(false); 
+    }
   };
 
   return (
     <Box pt={20}>
       <Card>
-        <VStack spacing="4" align="stretch" textAlign='end'>
-          <form onSubmit={handleSubmit}>
-            <Grid
-              templateColumns={{
-                sm: '1fr',
-                md: 'repeat(2, 1fr)',
-                lg: 'repeat(2, 1fr)',
-              }}
-              gap={4}
+        <VStack spacing="4" align="stretch" textAlign="end">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Text fontSize="xl" fontWeight="bold" mb={10} display="flex">
+              {ADD_NEW_ENTITY}
+            </Text>
+            <FormElements config={{ control, errors }} />
+            <Button
+              mt={10}
+              w="100px"
+              ml="auto"
+              type="submit"
+              colorScheme="teal"
+              isLoading={loading}
+              disabled={!isDirty || loading}
             >
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Your name"
-                  type="text"
-                />
-              </GridItem>
-
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Logo"
-                  name="logo"
-                  value={formData.logo}
-                  onChange={handleChange}
-                  placeholder="Your logo URL"
-                  type="text"
-                />
-              </GridItem>
-
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Your email address"
-                  type="text"
-                />
-              </GridItem>
-
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Subdomain"
-                  name="subdomain"
-                  value={formData.subdomain}
-                  onChange={handleChange}
-                  placeholder="Your subdomain"
-                  type="text"
-                />
-              </GridItem>
-
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Domain"
-                  name="domain"
-                  value={formData.domain}
-                  onChange={handleChange}
-                  placeholder="Your domain"
-                  type="text"
-                />
-              </GridItem>
-
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  placeholder="Your status"
-                  type="select"
-                  options={['Active', 'Inactive']}
-                />
-              </GridItem>
-
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  placeholder="Your date"
-                  type="date"
-                />
-              </GridItem>
-
-              <GridItem colSpan={{ sm: 1, md: 1, lg: 1 }}>
-                <FormInput
-                  label="Description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="Your description"
-                  type="text"
-                />
-              </GridItem>
-            </Grid>
-
-            <Button w='10%' type="submit" colorScheme="teal" ml='auto'>
-              Submit
+              {create
+                ? loading
+                  ? 'Creating...'
+                  : 'Create'
+                : loading
+                ? 'Updating...'
+                : 'Update'}
             </Button>
           </form>
         </VStack>

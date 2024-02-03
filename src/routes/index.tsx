@@ -21,7 +21,7 @@ const CrudForm = Loadable(React.lazy(() => import('@/modules/CrudForm')));
 const protectedRoutes = [
   { path: '/', component: DashboardCrm },
   { path: '/employees', component: Employees },
-  { path: '/:id/create', component: CrudForm },
+  { path: '/:id/:crud', component: CrudForm },
 ];
 
 const AppRoutes = () => {

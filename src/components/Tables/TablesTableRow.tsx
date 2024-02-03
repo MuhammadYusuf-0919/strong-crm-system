@@ -1,26 +1,49 @@
+import { setConfig } from '@/redux/configSlice';
+import { deleteEntity } from '@/redux/crudSlice';
+import { FormData } from '@/types';
 import {
   Avatar,
   Badge,
-  Button,
   Flex,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Td,
   Text,
   Tr,
   useColorModeValue,
-} from "@chakra-ui/react";
-import React from "react";
+} from '@chakra-ui/react';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Iconify from '../icon';
 
-function TablesTableRow(props) {
-  const { logo, name, email, subdomain, domain, status, date } = props;
-  const textColor = useColorModeValue("gray.700", "white");
-  const bgStatus = useColorModeValue("gray.400", "#1a202c");
-  const colorStatus = useColorModeValue("white", "gray.400");
+function TablesTableRow(props: FormData) {
+  const dispatch = useDispatch();
+  const { row, config } = props;
+  const {entity} = config
+  const { id, job, name, email, contact, address, status, age } = row;
+  const textColor = useColorModeValue('gray.700', 'white');
+  const bgStatus = useColorModeValue('gray.400', '#1a202c');
+  const colorStatus = useColorModeValue('white', 'gray.400');
+  const handleConfig = () => {
+    dispatch(setConfig({ ...config, update: true, editValue: row, create: false, }));
+  };
 
+  const handleDelete = () => {
+    dispatch(deleteEntity({ entityName: entity, id }));
+  }
   return (
     <Tr>
-      <Td minWidth={{ sm: "250px" }} pl="0px">
+      <Td minWidth={{ sm: '250px' }} pl="0px">
         <Flex align="center" py=".8rem" minWidth="100%" flexWrap="nowrap">
-          <Avatar src={logo} w="50px" borderRadius="12px" me="18px" />
+          <Avatar
+            src="/assets/img/avatars/avatar1.png"
+            w="50px"
+            borderRadius="12px"
+            me="18px"
+          />
           <Flex direction="column">
             <Text
               fontSize="md"
@@ -38,42 +61,47 @@ function TablesTableRow(props) {
       </Td>
 
       <Td>
-        <Flex direction="column">
-          <Text fontSize="md" color={textColor} fontWeight="bold">
-            {domain}
-          </Text>
-          <Text fontSize="sm" color="gray.400" fontWeight="normal">
-            {subdomain}
-          </Text>
-        </Flex>
+        <Text fontSize="md" color={textColor} fontWeight="bold">
+          {job}
+        </Text>
       </Td>
       <Td>
+        <Text fontSize="sm" color="gray.400" fontWeight="normal">
+          {address}
+        </Text>
+      </Td>
+      <Td>
+        <Text fontSize="sm" color="gray.400" fontWeight="normal">
+          {contact}
+        </Text>
+      </Td>
+      {/* <Td>
         <Badge
-          bg={status === "Online" ? "green.400" : bgStatus}
-          color={status === "Online" ? "white" : colorStatus}
+          bg={status === 'Online' ? 'green.400' : bgStatus}
+          color={status === 'Online' ? 'white' : colorStatus}
           fontSize="16px"
           p="3px 10px"
           borderRadius="8px"
         >
           {status}
         </Badge>
-      </Td>
+      </Td> */}
       <Td>
         <Text fontSize="md" color={textColor} fontWeight="bold" pb=".5rem">
-          {date}
+          {age}
         </Text>
       </Td>
       <Td>
-        <Button p="0px" bg="transparent" variant="no-hover">
-          <Text
-            fontSize="md"
-            color="gray.400"
-            fontWeight="bold"
-            cursor="pointer"
-          >
-            Edit
-          </Text>
-        </Button>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<Iconify icon="solar:menu-dots-bold" />}
+          />
+          <MenuList>
+            <MenuItem as={Link} to={`/${entity}/${"edit"}`} onClick={handleConfig}>Edit</MenuItem>
+            <MenuItem onClick={handleDelete}>Delete</MenuItem>
+          </MenuList>
+        </Menu>
       </Td>
     </Tr>
   );
